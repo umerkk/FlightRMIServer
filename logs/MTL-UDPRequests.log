@@ -1,9 +1,0 @@
-[16/10/2016 17:07:25] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
-[16/10/2016 17:08:18] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
-[16/10/2016 17:08:39] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
-[16/10/2016 17:10:48] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
-[16/10/2016 17:15:58] Success: Client executed "getFlightCount" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (UDP Request of GetFlightCount returned (0) at port (10007)).
-[16/10/2016 17:15:58] Success: Client executed "getFlightCount" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (UDP Request of GetFlightCount returned (0) at port (10009)).
-[16/10/2016 17:16:29] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
-[16/10/2016 17:17:08] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
-[16/10/2016 17:17:49] Debugging: Client executed "UDpRequest" on server "MTL". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).

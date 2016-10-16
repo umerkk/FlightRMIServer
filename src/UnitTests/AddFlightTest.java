@@ -10,7 +10,11 @@ public class AddFlightTest {
 
 	@Test
 	public void test() throws RemoteException {
-		assertTrue("sdf",flight.addFlightRecord("Karachi", "2016-12-25", "21:05", 5,4,3));
+		String[] response = new String[2];
+		response[0] = "Success";
+		response[1] = "Flight has been successfully added into our records.";
+		assertArrayEquals(response,flight.addFlightRecord("Karachi", "2016-12-25", "21:05", 5,4,3));
+		
 	}
 
 }

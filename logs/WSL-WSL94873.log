@@ -1,0 +1,1 @@
+[16/10/2016 18:44:32] Success: Client executed "addFlightRecord" on server "WSL". Invocation came from Manager with ID WSL94873 with additional following information ({RecordId= 1, DeptCity= null, arrivalCity= karachi, deptDate= 222, deptTime= 222, Economy= 222, Business= 222, FirstClass= 222}).

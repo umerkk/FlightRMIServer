@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AddFlightTest.class, BookFlightTest.class })
+@SuiteClasses({ AddFlightTest.class, BookFlightTest.class, UDPRequestTest.class })
 public class AllTests {
 	
 	

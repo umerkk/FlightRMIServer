@@ -1,0 +1,1 @@
+[16/10/2016 18:44:54] Success: Client executed "addFlightRecord" on server "NDH". Invocation came from Manager with ID NDH4242 with additional following information ({RecordId= 1, DeptCity= null, arrivalCity= karachi, deptDate= 22, deptTime= 22, Economy= 22, Business= 22, FirstClass= 22}).

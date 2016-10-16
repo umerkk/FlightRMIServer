@@ -13,7 +13,7 @@ public class UDPRequestTest {
 	@Test
 	public void test() {
 		
-		assertEquals(0, flight.sendUDPRequest(1007));
+		assertEquals(0, flight.sendUDPRequest(1007,"MTL1111"));
 		
 		
 	}

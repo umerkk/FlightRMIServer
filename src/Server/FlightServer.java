@@ -27,8 +27,11 @@ public class FlightServer implements FlightServerInterface {
 
 
 	@Override
-	public Boolean bookFlight(String firstName, String lastName, String address, String phoneNumber,
+	public String[] bookFlight(String firstName, String lastName, String address, String phoneNumber,
 			String destination, String deptDate, String time, String flightType) throws RemoteException {
+		
+		String[] response = new String[2];
+		
 
 		boolean returnVal = false;
 		String hashkey = lastName.substring(0, 1);
@@ -45,27 +48,36 @@ public class FlightServer implements FlightServerInterface {
 					int currentSeats = availableFlight.seats.get(flightType.toLowerCase());
 					if(availableFlight.seats.replace(flightType.toLowerCase(), --currentSeats) != null) {
 						passengerList.get(hashkey).add(tempPassenger);
-						returnVal =  true;
+						response[0] = "Success";
+						response[1] = "Your flight has been successfully booked.";
+						//returnVal =  true;
 						Logger.writeLog("Success","bookFlight", serverLocation, tempPassenger.stringify(), null);
 					} else {
-						returnVal =  false;
+						//returnVal =  false;
+						response[0] = "Error";
+						response[1] = "Problem while deducting available seats from the FlightList for the Boooking record ("+tempPassenger.stringify()+")";
 						Logger.writeLog("Error","bookFlight", serverLocation, "Problem while deducting available seat count from FlightList. Extra info: "+tempPassenger.stringify(), null);
 					}
 				}
 			} catch (Exception e)
 			{
 				//Log the error
+				response[0] = "Error";
+				response[1] = "Problem while deducting available seats from the FlightList for the Boooking record ("+tempPassenger.stringify()+")";
 				Logger.writeLog("Error","bookFlight", serverLocation, "Problem while deducting available seat count and adding passenger to booking list. Extra info: "+e.getMessage()+". Object info: "+tempPassenger.stringify(), null);
 			}
 		} else {
 			//Flight is not available.
-			returnVal =  false;
+			//returnVal =  false;
+			response[0] = "Error";
+			response[1] = "There is no flight flying at the desired dates OR there are not enough vacant seats for this reservation. ";
+			
 			Logger.writeLog("Error","bookFlight", serverLocation, "No available seat in the requested flight ("+deptDate+' '+time+' '+flightType+")", null);
 		}
 
 
 
-		return returnVal;
+		return response;
 
 		//return true;
 	}
@@ -85,9 +97,13 @@ public class FlightServer implements FlightServerInterface {
 
 
 	@Override
-	public Boolean addFlightRecord(String arrivalCity, String deptDate, String deptTime,int economySeats, int businessSeats, int firstClassSeats)
+	public String[] addFlightRecord(String arrivalCity, String deptDate, String deptTime,int economySeats, int businessSeats, int firstClassSeats)
 			throws RemoteException {
 
+		String[] response = new String[2];
+		String managerId=arrivalCity.substring(arrivalCity.indexOf("|")+1,arrivalCity.length());
+		arrivalCity = arrivalCity.substring(0,arrivalCity.indexOf("|"));
+		
 		Flights existingRecord=null;
 		if(flightList.containsKey(deptDate)) {
 			for(Flights f : flightList.get(deptDate)) {
@@ -116,21 +132,32 @@ public class FlightServer implements FlightServerInterface {
 			synchronized(this) {
 				flightList.get(deptDate).add(myFlight);
 			}
-			Logger.writeLog("Success","addFlightRecord", serverLocation, myFlight.stringify(), null);
-			return true;
+			Logger.writeLog("Success","addFlightRecord", serverLocation, myFlight.stringify(), managerId);
+			response[0] = "Success";
+			response[1] = "Flight has been successfully added into our records.";
+			
 
 		} else {
 
-			Logger.writeLog("Error","addFlightRecord", serverLocation, "There already exists another flight with the same flight parameters ("+deptDate+' '+deptTime+' '+arrivalCity+")", null);
-			return false;
+			Logger.writeLog("Error","addFlightRecord", serverLocation, "There already exists another flight with the same flight parameters ("+deptDate+' '+deptTime+' '+arrivalCity+")", managerId);
+			response[0] = "Error";
+			response[1] = "There exists anothjer flight with the same flight parameters.";
+			
 		}
+		
+		return response;
 
 	}
 
 	@Override
-	public Boolean removeFlight(String deptDate, int recordId) throws RemoteException {
+	public String[] removeFlight(String deptDate, int recordId) throws RemoteException {
 		// TODO Auto-generated method stub
 
+		String[] response = new String[2];
+		String managerId=deptDate.substring(deptDate.indexOf("|")+1,deptDate.length());
+		deptDate = deptDate.substring(0,deptDate.indexOf("|"));
+		
+		
 		boolean isFound = false;
 		if(flightList.containsKey(deptDate)) {
 			ArrayList<Flights> list = flightList.get(deptDate);
@@ -143,22 +170,33 @@ public class FlightServer implements FlightServerInterface {
 					isFound=true;
 					if(list.size() < 1)
 						flightList.remove(deptDate);
-					Logger.writeLog("Success","removeFlight", serverLocation, "DeptDate:"+deptDate+", RecordID: "+recordId, null);
+					Logger.writeLog("Success","removeFlight", serverLocation, "DeptDate:"+deptDate+", RecordID: "+recordId, managerId);
 
 				}
 			}
-			return isFound;
+			if(isFound)
+			{
+				response[0] = "Success";
+				response[1] = "Your flight has been successfully removed.";
+				
+			} else {
+				response[0] = "Error";
+				response[1] = "No flight was found with the specified RECORD ID";
+				
+			}
 		} else {
-			Logger.writeLog("Error","removeFlight", serverLocation, "No Flight exists on the spcified date ("+deptDate+' '+recordId+")", null);
+			Logger.writeLog("Error","removeFlight", serverLocation, "No Flight exists on the spcified date ("+deptDate+' '+recordId+")", managerId);
 
-			return false;
+			response[0] = "Error";
+			response[1] = "No flight on the specified date ("+deptDate+", "+recordId+")";
 		}
+		return response;
 
 	}
 
 
 	@Override
-	public int getBookedFlightCount() throws RemoteException {
+	public int getBookedFlightCount(String managerId) throws RemoteException {
 		// TODO Auto-generated method stub
 
 		int totalBooking=0;
@@ -167,7 +205,7 @@ public class FlightServer implements FlightServerInterface {
 		for (Map.Entry<String, Integer> entry : udpPorts.entrySet()) {
 			if(!entry.getKey().equalsIgnoreCase(serverLocation)){
 
-				totalBooking+=this.sendUDPRequest(entry.getValue());
+				totalBooking+=this.sendUDPRequest(entry.getValue(),managerId);
 
 			}
 		}
@@ -188,9 +226,14 @@ public class FlightServer implements FlightServerInterface {
 	}
 
 	@Override
-	public Boolean editFlightRecord(int recordId, String fieldName, String newValue) throws RemoteException {
+	public String[] editFlightRecord(int recordId, String fieldName, String newValue) throws RemoteException {
 		// TODO Auto-generated method stub
 
+		String[] response = new String[2];
+		String managerId=newValue.substring(newValue.indexOf("|")+1,newValue.length());
+		newValue = newValue.substring(0,newValue.indexOf("|"));
+		
+		
 		String deptDate = "";
 		boolean returnVal = false;
 		if(recordToDateMapper.containsKey(recordId)) {
@@ -206,12 +249,15 @@ public class FlightServer implements FlightServerInterface {
 					{
 						try {
 							temp.seats.replace(fieldName.toLowerCase(), Integer.parseInt(newValue));
-							Logger.writeLog("Success","editFlightRecord", serverLocation, "FieldName:"+fieldName+", FieldValue: "+newValue, null);
-							returnVal = true;
+							Logger.writeLog("Success","editFlightRecord", serverLocation, "FieldName:"+fieldName+", FieldValue: "+newValue, managerId);
+							response[0] = "Success";
+							response[1] = "Flight record is successfully modified (FieldName:"+fieldName+", FieldValue: "+newValue+")";
 						} catch (NumberFormatException nmb)
 						{
-							Logger.writeLog("Error","editFlightRecord", serverLocation, "Invalid value for the field name ("+fieldName+") is provided. Server is expecting a number for seat value ", null);
+							Logger.writeLog("Error","editFlightRecord", serverLocation, "Invalid value for the field name ("+fieldName+") is provided. Server is expecting a number for seat value ", managerId);
 							//return false;
+							response[0] = "Error";
+							response[1] = "Invalid value for the field name ("+fieldName+") is provided. Server is expecting a number for seat value ";
 
 						}
 
@@ -220,19 +266,24 @@ public class FlightServer implements FlightServerInterface {
 
 							java.lang.reflect.Field field = temp.getClass().getField(fieldName);
 							field.set(temp, newValue);
-							Logger.writeLog("Success","editFlightRecord", serverLocation, "FieldName:"+fieldName+", FieldValue: "+newValue, null);
-							returnVal = true;
+							Logger.writeLog("Success","editFlightRecord", serverLocation, "FieldName:"+fieldName+", FieldValue: "+newValue, managerId);
+							response[0] = "Success";
+							response[1] = "Flight record is successfully modified (FieldName:"+fieldName+", FieldValue: "+newValue+")";
 						} catch (NoSuchFieldException e)
 						{
-							Logger.writeLog("Error","editFlightRecord", serverLocation, "Invalid field id ("+fieldName+")", null);
-							returnVal =  false;
+							Logger.writeLog("Error","editFlightRecord", serverLocation, "Invalid field id ("+fieldName+")", managerId);
+							response[0] = "Error";
+							response[1] = "Invalid field id ("+fieldName+")";
+
 						} catch (IllegalArgumentException e) {
-							Logger.writeLog("Error","editFlightRecord", serverLocation, "IllegalArgumentException occured in ("+fieldName+")", null);
-							returnVal = false;
+							Logger.writeLog("Error","editFlightRecord", serverLocation, "IllegalArgumentException occured in ("+fieldName+")", managerId);
+							response[0] = "Error";
+							response[1] = "IllegalArgumentException occured in ("+fieldName+")";
 
 						} catch (IllegalAccessException e) {
-							Logger.writeLog("Error","editFlightRecord", serverLocation, "IllegaAccessException occured in field id ("+fieldName+")", null);
-							returnVal = false;
+							Logger.writeLog("Error","editFlightRecord", serverLocation, "IllegaAccessException occured in field id ("+fieldName+")", managerId);
+							response[0] = "Error";
+							response[1] = "IllegaAccessException occured in field id ("+fieldName+")";
 						}
 					}
 
@@ -242,12 +293,13 @@ public class FlightServer implements FlightServerInterface {
 
 
 		} else {
-			Logger.writeLog("Error","editFlightRecord", serverLocation, "No record exists with the specified recordId ("+recordId+")", null);
-			returnVal = false;
+			Logger.writeLog("Error","editFlightRecord", serverLocation, "No record exists with the specified recordId ("+recordId+")", managerId);
+			response[0] = "Error";
+			response[1] = "There is no such record exists for the specified Record ID ("+recordId+")";
 		}
 
 
-		return returnVal;
+		return response;
 	}
 
 	public void initServer(String serverName, int port) throws Exception
@@ -282,7 +334,7 @@ public class FlightServer implements FlightServerInterface {
 			return -1;
 	}
 
-	public int sendUDPRequest(int serverPort)
+	public int sendUDPRequest(int serverPort, String managerId)
 	{
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
@@ -300,14 +352,14 @@ public class FlightServer implements FlightServerInterface {
 			clientSocket.receive(receivePacket);
 
 			int returnCount = ByteBuffer.wrap(receivePacket.getData()).getInt();
-			Logger.writeLog("Success","getFlightCount", serverLocation, "UDP Request of GetFlightCount returned ("+returnCount+") at port ("+serverPort+")", "UDPRequests");
+			Logger.writeLog("Success","getFlightCount", serverLocation, "UDP Request of GetFlightCount returned ("+returnCount+") at port ("+serverPort+")", managerId);
 			clientSocket.close();
 
 			return returnCount;
 
 		} catch (Exception e)
 		{
-			Logger.writeLog("Error","getFlightCount", serverLocation, "UDP Request of GetFlightCount returned ERROR: ("+e.getMessage()+") at port ("+serverPort+")", "UDPRequests");
+			Logger.writeLog("Error","getFlightCount", serverLocation, "UDP Request of GetFlightCount returned ERROR: ("+e.getMessage()+") at port ("+serverPort+")", managerId);
 			return 0;
 		}
 	}
@@ -350,16 +402,13 @@ public class FlightServer implements FlightServerInterface {
 
 					sendData = toBytes(myServer.getActualBookedFlightCount());
 
-					Logger.writeLog("Debugging","UDpRequest", serverLocation, "The Return value is: ("+myServer.getActualBookedFlightCount()+")", "UDPRequests");
+					//Logger.writeLog("Debugging","UDpRequest", serverLocation, "The Return value is: ("+myServer.getActualBookedFlightCount()+")", "UDPRequests");
 
 					DatagramPacket sendPacket =new DatagramPacket(sendData, sendData.length, senderIp, senderPort);
 					udpSocket.send(sendPacket);
 
 				}
 			}
-
-
-
 		} catch (Exception e)
 		{
 			System.out.println(e.getMessage());
