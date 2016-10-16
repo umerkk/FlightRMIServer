@@ -1,0 +1,10 @@
+[16/10/2016 17:07:25] Debugging: Client executed "UDpRequest" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
+[16/10/2016 17:08:18] Debugging: Client executed "UDpRequest" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
+[16/10/2016 17:08:39] Debugging: Client executed "UDpRequest" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
+[16/10/2016 17:10:48] Success: Client executed "getFlightCount" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (UDP Request of GetFlightCount returned (33554432) at port (10007)).
+[16/10/2016 17:10:48] Success: Client executed "getFlightCount" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (UDP Request of GetFlightCount returned (0) at port (10008)).
+[16/10/2016 17:15:58] Debugging: Client executed "UDpRequest" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
+[16/10/2016 17:16:29] Debugging: Client executed "UDpRequest" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (0)).
+[16/10/2016 17:17:08] Debugging: Client executed "UDpRequest" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (The Return value is: (1)).
+[16/10/2016 17:17:49] Success: Client executed "getFlightCount" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (UDP Request of GetFlightCount returned (2) at port (10007)).
+[16/10/2016 17:17:49] Success: Client executed "getFlightCount" on server "NDH". Invocation came from Manager with ID UDPRequests with additional following information (UDP Request of GetFlightCount returned (0) at port (10008)).

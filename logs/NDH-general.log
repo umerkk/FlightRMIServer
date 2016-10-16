@@ -1,0 +1,2 @@
+[16/10/2016 17:16:49] Success: Client executed "addFlightRecord" on server "NDH". Invocation came from USER with additional following information ({RecordId= 1, DeptCity= null, arrivalCity= newyork, deptDate= 22, deptTime= 22, Economy= 22, Business= 22, FirstClass= 22}).
+[16/10/2016 17:17:01] Success: Client executed "bookFlight" on server "NDH". Invocation came from USER with additional following information ({FirstName= 22, LastName= 22, Address= 22, PhoneNumber= 22, Destination= newyork, FlightClass= business, DeptDate= 22, DeptTime= 22}).

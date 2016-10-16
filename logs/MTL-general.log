@@ -1,0 +1,2 @@
+[16/10/2016 17:06:33] Error: Client executed "bookFlight" on server "MTL". Invocation came from USER with additional following information (No available seat in the requested flight (22 22 economy)).
+[16/10/2016 17:15:51] Success: Client executed "addFlightRecord" on server "MTL". Invocation came from USER with additional following information ({RecordId= 1, DeptCity= null, arrivalCity= lahore, deptDate= 22, deptTime= 22, Economy= 22, Business= 22, FirstClass= 22}).
