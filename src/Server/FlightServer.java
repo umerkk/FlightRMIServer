@@ -1,7 +1,6 @@
 package Server;
 
 
-import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -25,7 +24,7 @@ public class FlightServer implements FlightServerInterface {
 	public String serverLocation = "";
 	private static int recordId=1;
 	HashMap<String,Integer> udpPorts = new HashMap<String,Integer>();
-	
+
 
 	@Override
 	public Boolean bookFlight(String firstName, String lastName, String address, String phoneNumber,
@@ -161,21 +160,21 @@ public class FlightServer implements FlightServerInterface {
 	@Override
 	public int getBookedFlightCount() throws RemoteException {
 		// TODO Auto-generated method stub
-		
+
 		int totalBooking=0;
 		totalBooking+=this.getActualBookedFlightCount();
-		
+
 		for (Map.Entry<String, Integer> entry : udpPorts.entrySet()) {
 			if(!entry.getKey().equalsIgnoreCase(serverLocation)){
-				
+
 				totalBooking+=this.sendUDPRequest(entry.getValue());
-				
+
 			}
 		}
 		return totalBooking;
-		
+
 	}
-	
+
 	private int getActualBookedFlightCount()
 	{
 		int totalBooking=0;
@@ -267,14 +266,14 @@ public class FlightServer implements FlightServerInterface {
 		myRegistry.bind(serverName, serverObject);
 		this.serverLocation = serverName;
 	}
-	
+
 	private void setUDPPorts()
 	{
 		this.udpPorts.put("WSL", 10007);
 		this.udpPorts.put("MTL", 10008);
 		this.udpPorts.put("NDH", 10009);
 	}
-	
+
 	private int getUDPPorts(String serverName)
 	{
 		if(udpPorts.containsKey(serverName))
@@ -282,30 +281,30 @@ public class FlightServer implements FlightServerInterface {
 		else
 			return -1;
 	}
-	
+
 	public int sendUDPRequest(int serverPort)
 	{
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		//sendData = "getBookedFlightCount".getBytes();
-		
+
 		try {
 			DatagramSocket clientSocket = new DatagramSocket();
 			//clientSocket.setSoTimeout(5000);
 			InetAddress IPAddress = InetAddress.getByName("localhost");
-			
+
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, serverPort);
 			clientSocket.send(sendPacket);
-			
+
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			clientSocket.receive(receivePacket);
-			
+
 			int returnCount = ByteBuffer.wrap(receivePacket.getData()).getInt();
 			Logger.writeLog("Success","getFlightCount", serverLocation, "UDP Request of GetFlightCount returned ("+returnCount+") at port ("+serverPort+")", "UDPRequests");
 			clientSocket.close();
-			
+
 			return returnCount;
-			
+
 		} catch (Exception e)
 		{
 			Logger.writeLog("Error","getFlightCount", serverLocation, "UDP Request of GetFlightCount returned ERROR: ("+e.getMessage()+") at port ("+serverPort+")", "UDPRequests");
@@ -316,7 +315,7 @@ public class FlightServer implements FlightServerInterface {
 	public static void main(String[] args) {
 		String serverLocation = "_unknown";
 		int port = 15033;
-		
+
 
 		try{
 			if (System.getSecurityManager() == null)
@@ -330,7 +329,7 @@ public class FlightServer implements FlightServerInterface {
 			FlightServer myServer = new FlightServer();
 			myServer.initServer(serverLocation, port);
 			System.out.println("RMI: '"+serverLocation+"' server is up and running on port "+port);
-			
+
 			myServer.setUDPPorts();
 			int myUdpPort = myServer.getUDPPorts(serverLocation);
 			if(myUdpPort != -1)
@@ -339,27 +338,27 @@ public class FlightServer implements FlightServerInterface {
 				System.out.println("UDP: '"+serverLocation+"' server is up and running on port "+myUdpPort);
 
 				byte[] receiveData = new byte[1024];
-	            byte[] sendData = new byte[1024];
-	            while(true)
-	               {
-	                  DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-	                  udpSocket.receive(receivePacket);
-	                  
-	                  InetAddress senderIp = receivePacket.getAddress();
-	                  int senderPort = receivePacket.getPort();
-	                 
-	                  
-	                  sendData = toBytes(myServer.getActualBookedFlightCount());
-	                  
-	                  Logger.writeLog("Debugging","UDpRequest", serverLocation, "The Return value is: ("+myServer.getActualBookedFlightCount()+")", "UDPRequests");
-	                  
-	                  DatagramPacket sendPacket =new DatagramPacket(sendData, sendData.length, senderIp, senderPort);
-	                  udpSocket.send(sendPacket);
-	                  
-	               }
+				byte[] sendData = new byte[1024];
+				while(true)
+				{
+					DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+					udpSocket.receive(receivePacket);
+
+					InetAddress senderIp = receivePacket.getAddress();
+					int senderPort = receivePacket.getPort();
+
+
+					sendData = toBytes(myServer.getActualBookedFlightCount());
+
+					Logger.writeLog("Debugging","UDpRequest", serverLocation, "The Return value is: ("+myServer.getActualBookedFlightCount()+")", "UDPRequests");
+
+					DatagramPacket sendPacket =new DatagramPacket(sendData, sendData.length, senderIp, senderPort);
+					udpSocket.send(sendPacket);
+
+				}
 			}
-			
-			
+
+
 
 		} catch (Exception e)
 		{
@@ -369,14 +368,14 @@ public class FlightServer implements FlightServerInterface {
 
 	public static byte[] toBytes(int i)
 	{
-	  byte[] result = new byte[4];
+		byte[] result = new byte[4];
 
-	  result[0] = (byte) (i >> 24);
-	  result[1] = (byte) (i >> 16);
-	  result[2] = (byte) (i >> 8);
-	  result[3] = (byte) (i /*>> 0*/);
+		result[0] = (byte) (i >> 24);
+		result[1] = (byte) (i >> 16);
+		result[2] = (byte) (i >> 8);
+		result[3] = (byte) (i /*>> 0*/);
 
-	  return result;
+		return result;
 	}
 
 
